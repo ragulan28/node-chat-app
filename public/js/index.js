@@ -1,5 +1,7 @@
 var socket = io();
-socket.on('connect', () => {
+var locationButton = jQuery('#send-location');
+
+socket.on('connect', function() {
     console.log("Connected to server!!");
 });
 
@@ -15,12 +17,12 @@ socket.on('disconnect', () => {
     console.log("Disconnect from server!!");
 });
 
-socket.emit('createMessage', {
-    from: 'ranjana',
-    text: 'Hi'
-}, function(data) {
-    console.log('Got it', data);
-});
+// socket.emit('createMessage', {
+//     from: 'ranjana',
+//     text: 'Hi'
+// }, function(data) {
+//     console.log('Got it', data);
+// });
 
 jQuery('#message-form').on('submit', function(e) {
     e.preventDefault();
@@ -30,4 +32,20 @@ jQuery('#message-form').on('submit', function(e) {
     }, function() {
 
     });
+});
+
+locationButton.on('click', function() {
+    if (!navigator.geolocation) {
+        return alert("Not Supported by browser");
+    }
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            socket.emit('creteLocationMessage', {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+            });
+        },
+        function() {
+            alert('Unable to etch location');
+        });
 });
