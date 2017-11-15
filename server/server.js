@@ -14,15 +14,31 @@ app.use(express.static(publicPath));
 io.on("connection", socket => {
     console.log("new user Connected");
 
+    socket.emit('newMessage', {
+        from: 'Admin',
+        text: 'Welcome to all'
+    });
+
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'New user Joined',
+        createdAt: new Date().getTime()
+    });
+
     socket.on("createMessage", message => {
         console.log("Create Message", message);
-        io.emit('newMessage', {
+        io.emit("newMessage", {
             from: message.from,
             text: message.text,
             createdAt: new Date().getTime()
         });
-    });
 
+        // socket.broadcast.emit('newMessage', {
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // });
+    });
 
     socket.on("disconnect", () => {
         console.log("Disconnect from server!!");
