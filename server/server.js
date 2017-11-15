@@ -10,13 +10,24 @@ var server = http.createServer(app);
 var io = socketIO(server);
 
 app.use(express.static(publicPath));
+
 io.on("connection", socket => {
     console.log("new user Connected");
+
+    socket.emit("newMessage", {
+        from: "ragulan",
+        text: "some text from client"
+    });
+
+    socket.on("createMessage", message => {
+        console.log("Create Message", message);
+    });
 
     socket.on("disconnect", () => {
         console.log("Disconnect from server!!");
     });
 });
+
 server.listen(port, () => {
     console.log(`Server is up on port: ${port}`);
 });
